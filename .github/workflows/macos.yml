@@ -22,7 +22,7 @@ jobs:
       CC: clang
       CXX: clang
       CLANG_DEFAULT_CXX_STDLIB: libc++
-
+      LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}:/usr/local/lib
     steps:
       - uses: actions/checkout@v4
 
