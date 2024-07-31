@@ -6,8 +6,8 @@ channels:
 dependencies:
   - cmake
   - git
-  - libcxx
   - clang_osx-arm64
+  - clangxx_osx-arm64
   - nanobind
   - ninja
   - pip
