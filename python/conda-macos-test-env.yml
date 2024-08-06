@@ -8,7 +8,7 @@ dependencies:
   - git
   # - clang_osx-arm64
   # - clangxx_osx-arm64
-  - libcxx
+  - libcxx=18.1.8
   - clangdev
   - nanobind
   - ninja
