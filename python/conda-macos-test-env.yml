@@ -9,7 +9,7 @@ dependencies:
   # - clang_osx-arm64
   # - clangxx_osx-arm64
   - libcxx=18.1.8
-  - clangdev
+  - clangdev=18.1.8
   - nanobind
   - ninja
   - pip
