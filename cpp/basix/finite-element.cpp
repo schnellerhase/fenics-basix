@@ -751,6 +751,9 @@ FiniteElement<F>::FiniteElement(
   }
   catch (...)
   {
+    // TODO: tp_factors needs to be called here but will throw in some cases.
+    //       This optional outcome should not force a (silenced) catch to be
+    //       necessary here.
   }
 
   std::vector<F> wcoeffs_b(wcoeffs.extent(0) * wcoeffs.extent(1));

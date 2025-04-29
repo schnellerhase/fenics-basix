@@ -8,7 +8,7 @@ Checks: >
   -bugprone-integer-division,
   -bugprone-implicit-widening-of-multiplication-result,
   -bugprone-integer-division,
-  -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
+  -bugprone-easily-swappable-parameters,
   -bugprone-reserved-identifier,
   performance*
