@@ -3,4 +3,14 @@ UseColor: true
 HeaderFilterRegex: '^(*mdspan\.hpp$).*'
 Checks: >
   -*,
+  bugprone*,
+  -bugprone-empty-catch,
+  -bugprone-integer-division,
+  -bugprone-implicit-widening-of-multiplication-result,
+  -bugprone-branch-clone,
+  -bugprone-integer-division,
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -bugprone-reserved-identifier,
+  -bugprone-move-forwarding-reference,
   performance*
