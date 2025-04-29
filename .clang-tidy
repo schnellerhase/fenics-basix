@@ -7,7 +7,6 @@ Checks: >
   -bugprone-empty-catch,
   -bugprone-integer-division,
   -bugprone-implicit-widening-of-multiplication-result,
-  -bugprone-branch-clone,
   -bugprone-integer-division,
   -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
