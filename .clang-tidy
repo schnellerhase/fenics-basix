@@ -12,5 +12,4 @@ Checks: >
   -bugprone-easily-swappable-parameters,
   -bugprone-narrowing-conversions,
   -bugprone-reserved-identifier,
-  -bugprone-move-forwarding-reference,
   performance*
