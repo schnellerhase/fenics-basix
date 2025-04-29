@@ -437,7 +437,7 @@ template <std::floating_point T>
 FiniteElement<T>
 basix::element::create_lagrange(cell::type celltype, int degree,
                                 lagrange_variant variant, bool discontinuous,
-                                std::vector<int> dof_ordering)
+                                const std::vector<int>& dof_ordering)
 {
   if (celltype == cell::type::point)
   {
@@ -765,10 +765,10 @@ FiniteElement<T> basix::element::create_iso(cell::type celltype, int degree,
 //-----------------------------------------------------------------------------
 template FiniteElement<float> element::create_lagrange(cell::type, int,
                                                        lagrange_variant, bool,
-                                                       std::vector<int>);
-template FiniteElement<double> element::create_lagrange(cell::type, int,
-                                                        lagrange_variant, bool,
-                                                        std::vector<int>);
+                                                       const std::vector<int>&);
+template FiniteElement<double>
+element::create_lagrange(cell::type, int, lagrange_variant, bool,
+                         const std::vector<int>&);
 template FiniteElement<float> element::create_iso(cell::type, int,
                                                   lagrange_variant, bool);
 template FiniteElement<double> element::create_iso(cell::type, int,
