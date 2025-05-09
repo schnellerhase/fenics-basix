@@ -1,0 +1,39 @@
+name: Basix CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*"
+  merge_group:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    name: Build and test (mac OS)
+    env:
+      CC: clang
+      CXX: clang
+      # CLANG_DEFAULT_CXX_STDLIB: libc++
+      # LD_LIBRARY_PATH: ${LD_LIBRARY_PATH}:/usr/local/lib
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: macos-test-env
+          environment-file: python/conda-macos-test-env.yml
+          auto-activate-base: false
+      - run: |
+          conda info
+          conda list
+
+      - name: Install Basix
+        run: pip -v install .[test]

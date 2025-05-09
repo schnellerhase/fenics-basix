@@ -1,0 +1,19 @@
+# Test environment for macOS system
+name: macos-test-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - cmake
+  - git
+  # - clang_osx-arm64
+  # - clangxx_osx-arm64
+  - libcxx=18.1.8
+  - clangdev=18.1.8
+  - nanobind
+  - ninja
+  - pip
+  - pytest
+  - pytest-xdist
+  - python=3.12
+  - scikit-build-core
