@@ -640,8 +640,9 @@ NB_MODULE(_basixcpp, m)
            element::lagrange_variant lagrange_variant,
            element::dpc_variant dpc_variant, bool discontinuous,
            const std::vector<int>& dof_ordering, char dtype)
-            -> std::variant<std::vector<std::vector<FiniteElement<float>>>,
-                            std::vector<std::vector<FiniteElement<double>>>>
+            -> std::variant<
+                std::optional<std::vector<std::vector<FiniteElement<float>>>>,
+                std::optional<std::vector<std::vector<FiniteElement<double>>>>>
         {
           if (dtype == 'd')
           {
@@ -695,15 +696,13 @@ NB_MODULE(_basixcpp, m)
                          as_nbarray(std::move(w)));
       });
 
-  m.def(
-      "gauss_jacobi_rule",
-      [](double a, int m)
-      {
-        auto [pts, w]
-            = quadrature::gauss_jacobi_rule<double>(a, m);
-        return std::pair(as_nbarray(std::move(pts)),
-                         as_nbarray(std::move(w)));
-      });
+  m.def("gauss_jacobi_rule",
+        [](double a, int m)
+        {
+          auto [pts, w] = quadrature::gauss_jacobi_rule<double>(a, m);
+          return std::pair(as_nbarray(std::move(pts)),
+                           as_nbarray(std::move(w)));
+        });
 
   m.def("index", nb::overload_cast<int>(&basix::indexing::idx));
   m.def("index", nb::overload_cast<int, int>(&basix::indexing::idx));
