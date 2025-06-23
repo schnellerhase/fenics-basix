@@ -23,6 +23,7 @@
 #include <concepts>
 #include <limits>
 #include <numeric>
+#include <optional>
 
 #define str_macro(X) #X
 #define str(X) str_macro(X)
@@ -333,7 +334,7 @@ basix::create_tp_element(element::family, cell::type, int,
                          element::lagrange_variant, element::dpc_variant, bool);
 //-----------------------------------------------------------------------------
 template <std::floating_point T>
-std::vector<std::vector<FiniteElement<T>>>
+std::optional<std::vector<std::vector<FiniteElement<T>>>>
 basix::tp_factors(element::family family, cell::type cell, int degree,
                   element::lagrange_variant lvariant,
                   element::dpc_variant dvariant, bool discontinuous,
@@ -341,46 +342,39 @@ basix::tp_factors(element::family family, cell::type cell, int degree,
 {
   std::vector<int> tp_dofs = tp_dof_ordering(family, cell, degree, lvariant,
                                              dvariant, discontinuous);
-  if (!tp_dofs.empty() && tp_dofs == dof_ordering)
+  if (tp_dofs.empty() || tp_dofs != dof_ordering)
+    return std::nullopt;
+
+  switch (family)
   {
-    switch (family)
+  case element::family::P:
+  {
+    FiniteElement<T> sub_element
+        = create_element<T>(element::family::P, cell::type::interval, degree,
+                            lvariant, dvariant, true);
+    switch (cell)
     {
-    case element::family::P:
-    {
-      FiniteElement<T> sub_element
-          = create_element<T>(element::family::P, cell::type::interval, degree,
-                              lvariant, dvariant, true);
-      switch (cell)
-      {
-      case cell::type::quadrilateral:
-      {
-        return {{sub_element, sub_element}};
-      }
-      case cell::type::hexahedron:
-      {
-        return {{sub_element, sub_element, sub_element}};
-      }
-      default:
-      {
-        throw std::runtime_error("Invalid celltype.");
-      }
-      }
-      break;
-    }
+    case cell::type::quadrilateral:
+      return {{{sub_element, sub_element}}};
+    case cell::type::hexahedron:
+      return {{{sub_element, sub_element, sub_element}}};
     default:
-    {
-      throw std::runtime_error("Invalid family.");
+      return std::nullopt;
     }
-    }
+    break;
   }
-  throw std::runtime_error(
-      "Element does not have tensor product factorisation.");
+  default:
+    return std::nullopt;
+  }
+  // C++ 23:
+  // std::unreachable()
+  return std::nullopt;
 }
 //-----------------------------------------------------------------------------
-template std::vector<std::vector<basix::FiniteElement<float>>>
+template std::optional<std::vector<std::vector<basix::FiniteElement<float>>>>
 basix::tp_factors(element::family, cell::type, int, element::lagrange_variant,
                   element::dpc_variant, bool, const std::vector<int>&);
-template std::vector<std::vector<basix::FiniteElement<double>>>
+template std::optional<std::vector<std::vector<basix::FiniteElement<double>>>>
 basix::tp_factors(element::family, cell::type, int, element::lagrange_variant,
                   element::dpc_variant, bool, const std::vector<int>&);
 //-----------------------------------------------------------------------------
@@ -744,17 +738,10 @@ FiniteElement<F>::FiniteElement(
     }
   }
 
-  try
-  {
-    _tensor_factors = tp_factors<F>(family, cell_type, degree, lvariant,
-                                    dvariant, discontinuous, _dof_ordering);
-  }
-  catch (...)
-  {
-    // TODO: tp_factors needs to be called here but will throw in some cases.
-    //       This optional outcome should not force a (silenced) catch to be
-    //       necessary here.
-  }
+  auto factors = tp_factors<F>(family, cell_type, degree, lvariant, dvariant,
+                               discontinuous, _dof_ordering);
+  if (factors.has_value())
+    _tensor_factors = factors.value();
 
   std::vector<F> wcoeffs_b(wcoeffs.extent(0) * wcoeffs.extent(1));
   std::copy(wcoeffs.data_handle(), wcoeffs.data_handle() + wcoeffs.size(),
