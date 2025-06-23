@@ -493,7 +493,7 @@ basix::tp_dof_ordering(element::family family, cell::type cell, int degree,
 
   dof_ordering.resize(perm.size());
   for (std::size_t i = 0; i < perm.size(); ++i)
-    dof_ordering[perm[i]] = i;
+    dof_ordering[perm[i]] = static_cast<int>(i);
   return dof_ordering;
 }
 //-----------------------------------------------------------------------------
@@ -632,7 +632,7 @@ FiniteElement<T> basix::create_custom_element(
     if (x[i].size()
         != (i > tdim ? 0
                      : static_cast<std::size_t>(
-                           cell::num_sub_entities(cell_type, i))))
+                           cell::num_sub_entities(cell_type, static_cast<int>(i)))))
     {
       throw std::runtime_error("x has the wrong number of entities");
     }
