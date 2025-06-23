@@ -726,7 +726,7 @@ FiniteElement<F>::FiniteElement(
       _embedded_superdegree(embedded_superdegree),
       _embedded_subdegree(embedded_subdegree), _value_shape(value_shape),
       _map_type(map_type), _sobolev_space(sobolev_space),
-      _discontinuous(discontinuous), _dof_ordering(dof_ordering)
+      _discontinuous(discontinuous), _dof_ordering(std::move(dof_ordering))
 {
   // Check that discontinuous elements only have DOFs on interior
   if (discontinuous)
@@ -747,7 +747,7 @@ FiniteElement<F>::FiniteElement(
   try
   {
     _tensor_factors = tp_factors<F>(family, cell_type, degree, lvariant,
-                                    dvariant, discontinuous, dof_ordering);
+                                    dvariant, discontinuous, _dof_ordering);
   }
   catch (...)
   {
