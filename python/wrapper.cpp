@@ -664,7 +664,7 @@ NB_MODULE(_basixcpp, m)
         [](element::family family_name, cell::type cell, int degree,
            element::lagrange_variant lagrange_variant,
            element::dpc_variant dpc_variant,
-           bool discontinuous) -> std::vector<int>
+           bool discontinuous) -> std::optional<std::vector<int>>
         {
           return basix::tp_dof_ordering(family_name, cell, degree,
                                         lagrange_variant, dpc_variant,

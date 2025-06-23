@@ -21,9 +21,11 @@
 #include <basix/version.h>
 #include <cmath>
 #include <concepts>
+#include <iostream>
 #include <limits>
 #include <numeric>
 #include <optional>
+#include <stdexcept>
 
 #define str_macro(X) #X
 #define str(X) str_macro(X)
@@ -320,10 +322,15 @@ basix::create_tp_element(element::family family, cell::type cell, int degree,
                          element::lagrange_variant lvariant,
                          element::dpc_variant dvariant, bool discontinuous)
 {
-  std::vector<int> dof_ordering = tp_dof_ordering(
+  std::optional<std::vector<int>> dof_ordering = tp_dof_ordering(
       family, cell, degree, lvariant, dvariant, discontinuous);
+
+  if (!dof_ordering.has_value())
+    throw std::runtime_error(
+        "Element does not have tensor product factorisation.");
+
   return create_element<T>(family, cell, degree, lvariant, dvariant,
-                           discontinuous, dof_ordering);
+                           discontinuous, *dof_ordering);
 }
 //-----------------------------------------------------------------------------
 template basix::FiniteElement<float>
@@ -340,9 +347,10 @@ basix::tp_factors(element::family family, cell::type cell, int degree,
                   element::dpc_variant dvariant, bool discontinuous,
                   const std::vector<int>& dof_ordering)
 {
-  std::vector<int> tp_dofs = tp_dof_ordering(family, cell, degree, lvariant,
-                                             dvariant, discontinuous);
-  if (tp_dofs.empty() || tp_dofs != dof_ordering)
+  std::optional<std::vector<int>> tp_dofs = tp_dof_ordering(
+      family, cell, degree, lvariant, dvariant, discontinuous);
+  if (!tp_dofs.has_value() || tp_dofs->empty()
+      || tp_dofs.value() != dof_ordering)
     return std::nullopt;
 
   switch (family)
@@ -378,9 +386,9 @@ template std::optional<std::vector<std::vector<basix::FiniteElement<double>>>>
 basix::tp_factors(element::family, cell::type, int, element::lagrange_variant,
                   element::dpc_variant, bool, const std::vector<int>&);
 //-----------------------------------------------------------------------------
-std::vector<int> basix::tp_dof_ordering(element::family family, cell::type cell,
-                                        int degree, element::lagrange_variant,
-                                        element::dpc_variant, bool)
+std::optional<std::vector<int>>
+basix::tp_dof_ordering(element::family family, cell::type cell, int degree,
+                       element::lagrange_variant, element::dpc_variant, bool)
 {
   std::vector<int> dof_ordering;
   std::vector<int> perm;
@@ -473,21 +481,17 @@ std::vector<int> basix::tp_dof_ordering(element::family family, cell::type cell,
       break;
     }
     default:
-    {
-    }
+      return std::nullopt;
     }
     break;
   }
   default:
-  {
-  }
+    return std::nullopt;
   }
 
   if (perm.size() == 0)
-  {
-    throw std::runtime_error(
-        "Element does not have tensor product factorisation.");
-  }
+    return std::nullopt;
+
   dof_ordering.resize(perm.size());
   for (std::size_t i = 0; i < perm.size(); ++i)
     dof_ordering[perm[i]] = i;
