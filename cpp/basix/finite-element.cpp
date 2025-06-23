@@ -21,7 +21,6 @@
 #include <basix/version.h>
 #include <cmath>
 #include <concepts>
-#include <iostream>
 #include <limits>
 #include <numeric>
 #include <optional>

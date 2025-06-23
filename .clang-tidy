@@ -4,7 +4,6 @@ HeaderFilterRegex: '^(*mdspan\.hpp$).*'
 Checks: >
   -*,
   bugprone*,
-  -bugprone-integer-division,
   -bugprone-implicit-widening-of-multiplication-result,
   -bugprone-integer-division,
   -bugprone-narrowing-conversions,
