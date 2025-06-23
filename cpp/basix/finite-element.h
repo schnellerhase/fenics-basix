@@ -17,6 +17,7 @@
 #include <functional>
 #include <map>
 #include <numeric>
+#include <optional>
 #include <span>
 #include <string>
 #include <tuple>
